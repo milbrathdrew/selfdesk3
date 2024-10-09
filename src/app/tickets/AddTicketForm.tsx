@@ -1,10 +1,7 @@
-// src/app/tickets/AddTicketForm.tsx
-
-'use client'; // This directive is necessary for client-side interactivity in Next.js 13+
+'use client';
 
 import { useState } from 'react';
 
-// Define the Ticket interface
 interface Ticket {
   id: string;
   title: string;
@@ -12,53 +9,46 @@ interface Ticket {
   createdAt: string;
 }
 
-// Define the props interface for type safety
 interface AddTicketFormProps {
-  onTicketAdded: (ticket: Ticket) => void; // Callback function to be called when a new ticket is added
+  onTicketAdded: (ticket: Ticket) => void;
 }
 
 export default function AddTicketForm({ onTicketAdded }: AddTicketFormProps) {
-  // State to hold the ticket title input
-  // useState hook allows us to add state to functional components
   const [title, setTitle] = useState('');
 
-  // Function to handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); // Prevent the default form submission behavior
-
+    e.preventDefault();
     try {
-      // Send a POST request to the API endpoint
       const response = await fetch('/api/tickets', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json', // Specify that we're sending JSON data
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ title }), // Convert the title to a JSON string
+        body: JSON.stringify({ title }),
       });
-
       if (response.ok) {
-        // If the response is successful (status in the range 200-299)
-        const newTicket: Ticket = await response.json(); // Parse the JSON response
-        setTitle(''); // Clear the input field after successful submission
-        onTicketAdded(newTicket); // Call the callback function with the new ticket data
+        const newTicket: Ticket = await response.json();
+        setTitle('');
+        onTicketAdded(newTicket);
       }
     } catch (error) {
-      // Log any errors that occur during the request
       console.error('Error creating ticket:', error);
-      // TODO: Add user-friendly error handling (e.g., displaying an error message)
     }
   };
 
+  const buttonClass = "bg-light-purple hover:bg-purple-hover text-white font-bold py-2 px-4 rounded transition-colors";
+
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="flex items-center space-x-4">
       <input
         type="text"
         value={title}
-        onChange={(e) => setTitle(e.target.value)} // Update state when input changes
+        onChange={(e) => setTitle(e.target.value)}
         placeholder="Enter ticket title"
-        required // Make this field required to ensure a title is entered
+        className="border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-light-purple focus:border-transparent"
+        required
       />
-      <button type="submit">Create Ticket</button>
+      <button type="submit" className={buttonClass}>Create Ticket</button>
     </form>
   );
 }
